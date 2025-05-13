@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sistem Pelaporan dan Pengawasan Limbah Industri</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 20px;
+    background: #f4f6f8;
+    color:#333;
+  }
+  h1 {
+    text-align: center;
+  }
+  .page {
+    display: none;
+    max-width: 400px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px #ccc;
+  }
+  .page.active {
+    display: block;
+  }
+  label {
+    display:block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  input[type=text], input[type=number], input[type=date], select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 6px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  input[type=radio] {
+    margin-right: 6px;
+  }
+  .radio-group label {
+    font-weight: normal;
+    margin-right: 15px;
+    cursor: pointer;
+  }
+  button {
+    margin-top:20px;
+    width:100%;
+    padding: 12px;
+    font-size: 16px;
+    border:none;
+    background-color:#007bff;
+    color:white;
+    border-radius: 6px;
+    cursor:pointer;
+  }
+  button:disabled{
+    background-color: #7aa7d9;
+    cursor: not-allowed;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 1000px;
+    margin: 30px auto;
+    background:white;
+  }
+  th, td {
+    border:1px solid #ddd;
+    padding: 10px;
+    text-align:center;
+    font-size: 0.9rem;
+  }
+  th {
+    background-color: #007bff;
+    color: white;
+  }
+  @media (max-width: 420px) {
+    body {
+      padding: 10px;
+    }
+    .page {
+      width: 100%;
+      margin:10px auto;
+      padding: 15px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Sistem Pelaporan dan Pengawasan Limbah Industri</h1>
+
+<!-- Page 1 -->
+<div id="page1" class="page active" aria-label="Halaman 1: Pelaporan tanggal dan jenis limbah">
+  <label for="reportDate">Tanggal Pelaporan (hari, tanggal, tahun):</label>
+  <input type="date" id="reportDate" />
+
+  <label for="wasteType">Jenis Limbah:</label>
+  <select id="wasteType" >
+    <option value="">-- Pilih Jenis Limbah --</option>
+    <option value="cair">Cair</option>
+    <option value="padat">Padat</option>
+    <option value="gas">Gas</option>
+  </select>
+
+  <button id="toPage2Btn" disabled>Lanjut ke Halaman 2</button>
+</div>
+
+<!-- Page 2 -->
+<div id="page2" class="page" aria-label="Halaman 2: Data berdasarkan jenis limbah">
+  <!-- Cair -->
+  <div id="cairPage2" style="display:none;">
+    <label for="treatmentTechnology">Jenis Teknologi Pengolahan:</label>
+    <input type="text" id="treatmentTechnology" placeholder="Contoh: Teknologi A" />
+
+    <label for="treatmentProcess">Proses Pengolahan (primer, sekunder, tersier):</label>
+    <select id="treatmentProcess">
+      <option value="">-- Pilih Proses --</option>
+      <option value="primer">Primer</option>
+      <option value="sekunder">Sekunder</option>
+      <option value="tersier">Tersier</option>
+    </select>
+
+    <label for="ipalCapacity">Kapasitas IPAL (m³/hari):</label>
+    <input type="number" id="ipalCapacity" min="0" />
+
+    <label for="wasteDebit">Debit Limbah yang Diolah:</label>
+    <input type="number" id="wasteDebit" min="0" />
+
+    <label for="reagents">Reagen atau Bahan Kimia yang Digunakan:</label>
+    <input type="text" id="reagents" />
+  </div>
+  <!-- Padat -->
+  <div id="padatPage2" style="display:none;">
+    <label for="solidWasteType">Jenis Limbah (B3 / Non B3):</label>
+    <select id="solidWasteType">
+      <option value="">-- Pilih Jenis Limbah --</option>
+      <option value="B3">B3</option>
+      <option value="Non B3">Non B3</option>
+    </select>
+
+    <label for="solidTreatmentMethod">Cara Pengolahan:</label>
+    <input type="text" id="solidTreatmentMethod" placeholder="Contoh: Pengomposan" />
+
+    <label for="solidWasteVolume">Volume Limbah per Minggu:</label>
+    <input type="number" id="solidWasteVolume" min="0" />
+
+    <label for="solidStorageLocation">Lokasi Penyimpanan Sementara:</label>
+    <input type="text" id="solidStorageLocation" />
+
+    <label for="solidStorageMethod">Metode Penyimpanan Sementara:</label>
+    <input type="text" id="solidStorageMethod" />
+  </div>
+  <!-- Gas -->
+  <div id="gasPage2" style="display:none;">
+    <label for="emissionControlTechnology">Teknologi Pengendalian Emisi:</label>
+    <input type="text" id="emissionControlTechnology" placeholder="Contoh: Scrubber" />
+
+    <label for="gasType">Jenis Gas yang Ditangani:</label>
+    <input type="text" id="gasType" placeholder="Contoh: CO2, SO2" />
+  </div>
+
+  <button id="toPage3Btn" disabled>Lanjut ke Halaman 3</button>
+</div>
+
+<!-- Page 3 -->
+<div id="page3" class="page" aria-label="Halaman 3: Data pengawasan berdasarkan jenis limbah">
+  <!-- Cair -->
+  <div id="cairPage3" style="display:none;">
+    <label for="phControl">pH:</label>
+    <input type="number" id="phControl" min="0" max="14" step="0.1" />
+
+    <label for="temperatureControl">Suhu (°C):</label>
+    <input type="number" id="temperatureControl" step="0.1" />
+
+    <label for="testParameter">Parameter Uji:</label>
+    <input type="text" id="testParameter" placeholder="Contoh:COD, BOD" />
+
+    <label for="samplePreservation">Cara Pengawetan Sampel:</label>
+    <input type="text" id="samplePreservation" placeholder="Contoh: Cooling 4°C" />
+
+    <label for="sampleExpiry">Expired Sampel (Tanggal):</label>
+    <input type="date" id="sampleExpiry" />
+  </div>
+  <!-- Padat -->
+  <div id="padatPage3" style="display:none;">
+    <label for="testChoice">Pilihan Uji:</label>
+    <select id="testChoice" multiple size="3">
+      <option value="kandungan bahan berbahaya">Kandungan Bahan Berbahaya</option>
+      <option value="uji TCLP">Uji TCLP</option>
+      <option value="kadar air dan bahan organik">Kadar Air dan Bahan Organik</option>
+    </select>
+  </div>
+  <!-- Gas -->
+  <div id="gasPage3" style="display:none;">
+    <label for="exhaustGasConcentration">Konsentrasi Gas Buang:</label>
+    <input type="text" id="exhaustGasConcentration" placeholder="Contoh: 450 ppm" />
+
+    <label for="gasParameter">Parameter:</label>
+    <input type="text" id="gasParameter" placeholder="Contoh: CO, NOx" />
+
+    <label for="opacity">Opasitas:</label>
+    <input type="text" id="opacity" placeholder="Contoh: 20%" />
+  </div>
+
+  <button id="submitBtn" disabled>Kirim Laporan</button>
+</div>
+
+<!-- Table -->
+<div id="result" style="max-width: 1000px; margin: 30px auto;">
+  <h2>Data Pelaporan dan Pengawasan</h2>
+  <table id="dataTable" aria-label="Tabel data pelaporan dan pengawasan limbah">
+    <thead>
+      <tr>
+        <th>Tanggal Pelaporan</th>
+        <th>Jenis Limbah</th>
+        <th>Data Halaman 2</th>
+        <th>Data Halaman 3</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+  (function(){
+    const pages = ['page1','page2','page3'];
+    let currentPage = 0;
+    const data = {};
+
+    // Elements
+    const reportDate = document.getElementById('reportDate');
+    const wasteType = document.getElementById('wasteType');
+    const toPage2Btn = document.getElementById('toPage2Btn');
+    
+    // Page 2 elements grouped by waste type
+    const cairPage2 = document.getElementById('cairPage2');
+    const padatPage2 = document.getElementById('padatPage2');
+    const gasPage2 = document.getElementById('gasPage2');
+
+    // Page 3 elements grouped by waste type
+    const cairPage3 = document.getElementById('cairPage3');
+    const padatPage3 = document.getElementById('padatPage3');
+    const gasPage3 = document.getElementById('gasPage3');
+
+    const toPage3Btn = document.getElementById('toPage3Btn');
+    const submitBtn = document.getElementById('submitBtn');
+    const dataTableBody = document.querySelector('#dataTable tbody');
+
+    // Validation Helpers
+    function isPage1Valid(){
+      return reportDate.value!=='' && wasteType.value!=='';
+    }
+    function isPage2Valid(){
+      let valid = false;
+      if(wasteType.value==='cair'){
+        valid = 
+          document.getElementById('treatmentTechnology').value.trim()!==''
+          && document.getElementById('treatmentProcess').value!==''
+          && document.getElementById('ipalCapacity').value>0
+          && document.getElementById('wasteDebit').value>0
+          && document.getElementById('reagents').value.trim()!=='';
+      } else if(wasteType.value==='padat'){
+        valid = 
+          document.getElementById('solidWasteType').value!==''
+          && document.getElementById('solidTreatmentMethod').value.trim()!==''
+          && document.getElementById('solidWasteVolume').value>0
+          && document.getElementById('solidStorageLocation').value.trim()!==''
+          && document.getElementById('solidStorageMethod').value.trim()!=='';
+      } else if(wasteType.value==='gas'){
+        valid = 
+          document.getElementById('emissionControlTechnology').value.trim()!==''
+          && document.getElementById('gasType').value.trim()!=='';
+      }
+      return valid;
+    }
+    function isPage3Valid(){
+      if(wasteType.value==='cair'){
+        return (
+          document.getElementById('phControl').value!=='' &&
+          document.getElementById('temperatureControl').value!=='' &&
+          document.getElementById('testParameter').value.trim()!=='' &&
+          document.getElementById('samplePreservation').value.trim()!=='' &&
+          document.getElementById('sampleExpiry').value!==''
+        );
+      } else if(wasteType.value==='padat'){
+        const options = Array.from(document.getElementById('testChoice').options);
+        return options.some(opt => opt.selected);
+      } else if(wasteType.value==='gas'){
+        return (
+          document.getElementById('exhaustGasConcentration').value.trim()!=='' &&
+          document.getElementById('gasParameter').value.trim()!=='' &&
+          document.getElementById('opacity').value.trim()!==''
+        );
+      }
+      return false;
+    }
+
+    // Show page function
+    function showPage(n){
+      pages.forEach((p,i)=> {
+        document.getElementById(p).classList.toggle('active', i === n);
+      });
+      // Show/hide page2 inputs depending on waste type
+      cairPage2.style.display = wasteType.value==='cair' ? 'block' : 'none';
+      padatPage2.style.display = wasteType.value==='padat' ? 'block' : 'none';
+      gasPage2.style.display = wasteType.value==='gas' ? 'block' : 'none';
+      // Show/hide page3 inputs depending on waste type
+      cairPage3.style.display = wasteType.value==='cair' ? 'block' : 'none';
+      padatPage3.style.display = wasteType.value==='padat' ? 'block' : 'none';
+      gasPage3.style.display = wasteType.value==='gas' ? 'block' : 'none';
+      currentPage = n;
+      // Reset buttons disabled state
+      toPage2Btn.disabled = !isPage1Valid();
+      toPage3Btn.disabled = !isPage2Valid();
+      submitBtn.disabled = !isPage3Valid();
+    }
+
+    // Update button states
+    reportDate.addEventListener('input', ()=> {
+      toPage2Btn.disabled = !isPage1Valid();
+    });
+    wasteType.addEventListener('change', () => {
+      toPage2Btn.disabled = !isPage1Valid();
+    });
+
+    // Page 2 validation events
+    cairPage2.querySelectorAll('input,select').forEach(el=>{
+      el.addEventListener('input', () => {
+        toPage3Btn.disabled = !isPage2Valid();
+      });
+    });
+    padatPage2.querySelectorAll('input,select').forEach(el=>{
+      el.addEventListener('input', () => {
+        toPage3Btn.disabled = !isPage2Valid();
+      });
+    });
+    gasPage2.querySelectorAll('input,select').forEach(el=>{
+      el.addEventListener('input', () => {
+        toPage3Btn.disabled = !isPage2Valid();
+      });
+    });
+
+    // Page 3 validation events
+    cairPage3.querySelectorAll('input').forEach(el=>{
+      el.addEventListener('input', () => {
+        submitBtn.disabled = !isPage3Valid();
+      });
+    });
+    padatPage3.querySelectorAll('select').forEach(el=>{
+      el.addEventListener('change', () => {
+        submitBtn.disabled = !isPage3Valid();
+      });
+    });
+    gasPage3.querySelectorAll('input').forEach(el=>{
+      el.addEventListener('input', () => {
+        submitBtn.disabled = !isPage3Valid();
+      });
+    });
+
+    // Navigation buttons
+    toPage2Btn.addEventListener('click', () => {
+      if(!isPage1Valid()) {
+        alert('Mohon isi semua data di halaman 1 dengan benar!');
+        return;
+      }
+      showPage(1);
+    });
+    toPage3Btn.addEventListener('click', () => {
+      if(!isPage2Valid()) {
+        alert('Mohon isi semua data di halaman 2 dengan benar!');
+        return;
+      }
+      showPage(2);
+    });
+
+    // Submit button
+    submitBtn.addEventListener('click', () => {
+      if(!isPage3Valid()) {
+        alert('Mohon isi semua data di halaman 3 dengan benar!');
+        return;
+      }
+      // Collect all data
+      const entry = {
+        tanggalPelaporan: reportDate.value,
+        jenisLimbah: wasteType.value,
+        dataPage2: {},
+        dataPage3: {},
+      };
+      if(entry.jenisLimbah==='cair'){
+        entry.dataPage2 = {
+          jenisTeknologiPengolahan: document.getElementById('treatmentTechnology').value.trim(),
+          prosesPengolahan: document.getElementById('treatmentProcess').value,
+          kapasitasIPAL: document.getElementById('ipalCapacity').value,
+          debitLimbah: document.getElementById('wasteDebit').value,
+          reagen: document.getElementById('reagents').value.trim(),
+        };
+        entry.dataPage3 = {
+          ph: document.getElementById('phControl').value,
+          suhu: document.getElementById('temperatureControl').value,
+          parameterUji: document.getElementById('testParameter').value.trim(),
+          caraPengawetan: document.getElementById('samplePreservation').value.trim(),
+          expiredSampel: document.getElementById('sampleExpiry').value,
+        };
+      } else if(entry.jenisLimbah==='padat'){
+        entry.dataPage2 = {
+          jenisLimbahPadat: document.getElementById('solidWasteType').value,
+          caraPengolahan: document.getElementById('solidTreatmentMethod').value.trim(),
+          volumePerMinggu: document.getElementById('solidWasteVolume').value,
+          lokasiPenyimpanan: document.getElementById('solidStorageLocation').value.trim(),
+          metodePenyimpanan: document.getElementById('solidStorageMethod').value.trim(),
+        };
+        const testChoiceSelect = document.getElementById('testChoice');
+        entry.dataPage3 = {
+          pilihanUji: Array.from(testChoiceSelect.selectedOptions).map(opt=>opt.text).join(', ')
+        };
+      } else if(entry.jenisLimbah==='gas'){
+        entry.dataPage2 = {
+          teknologiPengendalianEmisi: document.getElementById('emissionControlTechnology').value.trim(),
+          jenisGas: document.getElementById('gasType').value.trim(),
+        };
+        entry.dataPage3 = {
+          konsentrasiGasBuang: document.getElementById('exhaustGasConcentration').value.trim(),
+          parameter: document.getElementById('gasParameter').value.trim(),
+          opasitas: document.getElementById('opacity').value.trim(),
+        };
+      }
+
+      addEntryToTable(entry);
+      resetForm();
+      showPage(0);
+      alert('Laporan berhasil dikirim!');
+    });
+
+    function addEntryToTable(entry){
+      const tr = document.createElement('tr');
+
+      // Format date to Indonesian locale if set
+      let tanggal = '';
+      try {
+        tanggal = new Date(entry.tanggalPelaporan).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'});
+      } catch {
+        tanggal = entry.tanggalPelaporan;
+      }
+      tr.innerHTML = `
+        <td>${tanggal}</td>
+        <td>${capitalizeFirstLetter(entry.jenisLimbah)}</td>
+        <td>${formatPage2(entry)}</td>
+        <td>${formatPage3(entry)}</td>
+      `;
+      dataTableBody.appendChild(tr);
+    }
+    function formatPage2(entry){
+      let html = '';
+      if(entry.jenisLimbah==='cair'){
+        html += `Jenis Teknologi: ${entry.dataPage2.jenisTeknologiPengolahan}<br>`;
+        html += `Proses: ${capitalizeFirstLetter(entry.dataPage2.prosesPengolahan)}<br>`;
+        html += `Kapasitas IPAL: ${entry.dataPage2.kapasitasIPAL} m³/hari<br>`;
+        html += `Debit Limbah: ${entry.dataPage2.debitLimbah}<br>`;
+        html += `Reagen: ${entry.dataPage2.reagen}`;
+      } else if(entry.jenisLimbah==='padat'){
+        html += `Jenis Limbah: ${entry.dataPage2.jenisLimbahPadat}<br>`;
+        html += `Cara Pengolahan: ${entry.dataPage2.caraPengolahan}<br>`;
+        html += `Volume per Minggu: ${entry.dataPage2.volumePerMinggu}<br>`;
+        html += `Lokasi Penyimpanan: ${entry.dataPage2.lokasiPenyimpanan}<br>`;
+        html += `Metode Penyimpanan: ${entry.dataPage2.metodePenyimpanan}`;
+      } else if(entry.jenisLimbah==='gas'){
+        html += `Teknologi Pengendalian: ${entry.dataPage2.teknologiPengendalianEmisi}<br>`;
+        html += `Jenis Gas: ${entry.dataPage2.jenisGas}`;
+      }
+      return html;
+    }
+    function formatPage3(entry){
+      let html = '';
+      if(entry.jenisLimbah==='cair'){
+        html += `pH: ${entry.dataPage3.ph}<br>`;
+        html += `Suhu: ${entry.dataPage3.suhu} °C<br>`;
+        html += `Parameter Uji: ${entry.dataPage3.parameterUji}<br>`;
+        html += `Cara Pengawetan: ${entry.dataPage3.caraPengawetan}<br>`;
+        html += `Expired Sampel: ${entry.dataPage3.expiredSampel}`;
+      } else if(entry.jenisLimbah==='padat'){
+        html += `Pilihan Uji: ${entry.dataPage3.pilihanUji}`;
+      } else if(entry.jenisLimbah==='gas'){
+        html += `Konsentrasi Gas Buang: ${entry.dataPage3.konsentrasiGasBuang}<br>`;
+        html += `Parameter: ${entry.dataPage3.parameter}<br>`;
+        html += `Opasitas: ${entry.dataPage3.opasitas}`;
+      }
+      return html;
+    }
+    function capitalizeFirstLetter(string) {
+      if(!string) return string;
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    // Reset all forms and buttons
+    function resetForm(){
+      // Page 1
+      reportDate.value = '';
+      wasteType.value = '';
+      toPage2Btn.disabled = true;
+
+      // Page 2 inputs
+      document.querySelectorAll('#page2 input, #page2 select').forEach(el => el.value = '');
+      toPage3Btn.disabled = true;
+
+      // Page 3 inputs
+      document.querySelectorAll('#page3 input, #page3 select').forEach(el => {
+        if(el.multiple){
+          Array.from(el.options).forEach(o => o.selected = false);
+        } else {
+          el.value = '';
+        }
+      });
+      submitBtn.disabled = true;
+    }
+
+    // Show page 1 on initial
+    showPage(0);
+
+  })();
+</script>
+
+</body>
+</html>
